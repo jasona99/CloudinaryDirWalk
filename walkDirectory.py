@@ -7,3 +7,5 @@ from cloudinary.api import resources_by_tag
 import settings
 #set api key in Cloudinary config
 settings.set()
+
+START_TAG = "mass_upload_file"
