@@ -29,10 +29,10 @@ def dump_response(response):
         print("  %s: %s" % (key, response[key]))
 
 #upload with file path and name, list of tags to be applied
-def upload_file(path, file, tag_list):
+def upload_file(path, filename, tag_list):
     print("Uploading", file)
     path = '/'.join(path.split('\\'))
-    print(path[2:]+"/"+file)
+    print(path[2:]+"/"+filename)
 
     #check autotag flag
     if autotag_flag == True:
@@ -78,11 +78,11 @@ def directory_tags(split_path):
 #move to ./Backup/Images
 #ensures that, if code must be run again, no need to worry about where it left off.
 #quicker solution than checking Cloudinary for duplicates
-def completed_move(path, file):
+def completed_move(path, filename):
     newpath = "./Backup"+path[1:]
     if not os.path.exists(newpath):
         os.makedirs(newpath)
-    os.rename(path+"\\"+file, newpath+"\\"+file)
+    os.rename(path+"\\"+filename, newpath+"\\"+filename)
 
 #get a public id with directories so as to get subdirectories
 #with use_filename parameter, should be unnecessary
@@ -108,7 +108,7 @@ if (os.path.isdir("Images")):
 
             #this line below actually will upload things
             #be wary if testing
-            if not file[-2:] == "db":
+            if not file[-2:] == "db" and not file.startswith("."):
                 upload_code = upload_file(root, file, tags)
 
                 #move completed files
