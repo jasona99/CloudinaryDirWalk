@@ -130,7 +130,7 @@ if (os.path.isdir("Images")):
 
             #this line below actually will upload things
             #be wary if testing
-            if not file[-2:] == "db" and not file.startswith(".") and not file[-3:] == "zip" and not file[-3:] == "mov":
+            if not file[-2:] == "db" and not file.startswith(".") and not file[-3:] == "zip" and not file[-3:] == "MOV" and not file[-3:] == "mov":
                 upload_code = upload_file(root, file, tags)
 
                 #move completed files
