@@ -97,6 +97,7 @@ if (os.path.isdir("Images")):
 
                 #move completed files
                 if upload_code == 0:
+                    #move completed files to backup dir
                     completed_move(root, file)
                     print("Complete.")
                 else:
