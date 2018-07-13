@@ -13,6 +13,7 @@ import settings
 settings.set()
 #this may need to be run every hour in order to stay logged in
 
+#a tag that may be added to help show origin of images
 START_TAG = "mass_uploaded_file"
 
 #from sample file
@@ -23,7 +24,7 @@ def dump_response(response):
         print("  %s: %s" % (key, response[key]))
 
 #upload with file path and name, list of tags to be applied
-def upload_file(path, file, tag_list, public_id):
+def upload_file(path, file, tag_list):
     print("Uploading", file)
     path = '/'.join(path.split('\\'))
     print(path[2:]+"/"+file)
@@ -39,20 +40,28 @@ def upload_file(path, file, tag_list, public_id):
 
     #for debugging only:
     dump_response(response)
+
+    #check if response given
+    #it seems if anything fails, Cloudinary breaks for us
     if not len(response["public_id"]) > 0:
         return 1
-    #reached end, safety code
+    #reached
     return 0
 
 #develop tags based on directories
+#cosider storing rather than resetting
 def directory_tags(split_path):
     tag_list = []
     for dirs in split_path:
         tag_list.extend(re.split(r'[//-]+', dirs))
     tag_list.pop(0)
+    #Uncomment to add origin tag.
+    #tag_list.append(START_TAG)
     return tag_list
 
 #move to ./Backup/Images
+#ensures that, if code must be run again, no need to worry about where it left off.
+#quicker solution than checking Cloudinary for duplicates
 def completed_move(path, file):
     newpath = "./Backup"+path[1:]
     if not os.path.exists(newpath):
@@ -60,6 +69,7 @@ def completed_move(path, file):
     os.rename(path+"\\"+file, newpath+"\\"+file)
 
 #get a public id with directories so as to get subdirectories
+#with use_filename parameter, should be unnecessary
 def get_id(path, file):
     fixed_path = path[1:]
     return fixed_path.replace(" ","-")+"/"+file.replace(" ","-")
@@ -83,7 +93,7 @@ if (os.path.isdir("Images")):
             #this line below actually will upload things
             #be wary if testing
             if not file[-2:] == "db":
-                upload_code = upload_file(root, file, tags, pub_id)
+                upload_code = upload_file(root, file, tags)
 
                 #move completed files
                 if upload_code == 0:
