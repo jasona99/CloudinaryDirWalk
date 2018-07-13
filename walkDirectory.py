@@ -1,4 +1,7 @@
-import os, re
+#some basic imports
+import os, re, shutil
+
+#cloudinary sdk
 from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
 
@@ -20,18 +23,37 @@ def dump_response(response):
         print("  %s: %s" % (key, response[key]))
 
 #upload with file path and name, list of tags to be applied
-def upload(file, tag_list, public_id):
+def upload_file(path, file, tag_list, public_id):
     print("Uploading", file)
-    response = upload(file, tags = tag_list)
+    path = '/'.join(path.split('\\'))
+    print(path[2:]+"/"+file)
+    response = upload(path[2:]+"/"+file,
+                      use_filename = True,
+                      folder = path[2:],
+                      categorization = "google_tagging",
+                      auto_tagging = 0.5,
+                      tags = tag_list)
+
     #if upload fails, should just create an error and kill the script
     #otherwise, may be necessary to read response here
 
     #for debugging only:
     dump_response(response)
+    if not len(response["public_id"]) > 0:
+        return 1
+    #reached end, safety code
+    return 0
 
-    #reached end, safety print
-    print("Complete!")
+#ignore
+def tmp_move(path, file):
+    ext = os.path.splitext(file)[1]
+    shutil.copyfile(path+"\\"+file, ".\\temp" + ext)
+    return "temp"+ext, ext
 
+def tmp_delete():
+    os.remove("./tmp.jpg")
+
+#develop tags based on directories
 def directory_tags(split_path):
     tag_list = []
     for dirs in split_path:
@@ -39,17 +61,17 @@ def directory_tags(split_path):
     tag_list.pop(0)
     return tag_list
 
+#move to ./Backup/Images
 def completed_move(path, file):
     newpath = "./Backup"+path[1:]
     if not os.path.exists(newpath):
         os.makedirs(newpath)
     os.rename(path+"\\"+file, newpath+"\\"+file)
-    print("Moved.")
 
-
+#get a public id with directories so as to get subdirectories
 def get_id(path, file):
     fixed_path = path[1:]
-    return fixed_path + "\\" + file
+    return fixed_path.replace(" ","-")+"/"+file.replace(" ","-")
 
 #check if Images exists
 if (os.path.isdir("Images")):
@@ -58,24 +80,27 @@ if (os.path.isdir("Images")):
     print("Uploading all images in folders below",os.path.dirname(__file__)+"\Images")
 
     #tranverse directories
-    for root, dirs, files in os.walk(".\\Images\\"):
+    for root, dirs, files in os.walk("./Images"):
         #break directory into list
         path = root.split(os.sep)
-        print(os.path.basename(root))
+        #print(os.path.basename(root))
         for file in files:
             print(file)
             tags = directory_tags(path)
-            print(tags)
             pub_id = get_id(root, file)
-            print(pub_id)
 
             #this line below actually will upload things
             #be wary if testing
-            #upload(file, tags, pub_id)
+            if not file[-1:] == "b":
+                upload_code = upload_file(root, file, tags, pub_id)
 
-            #move completed files
-            completed_move(root, file)
+                #move completed files
+                if upload_code == 0:
+                    completed_move(root, file)
+                    print("Complete.")
+                else:
+                    print("Failed at ",file)
 
-
+#no images?
 else:
     print("Images directory not found.")
