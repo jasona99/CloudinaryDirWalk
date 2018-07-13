@@ -1,5 +1,5 @@
 #some basic imports
-import os, re, shutil
+import os, re, shutil, time
 
 #cloudinary sdk
 from cloudinary.uploader import upload
@@ -23,6 +23,7 @@ autotag_flag = False
 win_os = False
 
 def get_os():
+    global win_os
     if os.name == "nt":
         print("Note: Running Windows!")
         win_os = True
@@ -113,6 +114,9 @@ if (os.path.isdir("Images")):
 
     #notify of path that will be uploaded
     print("Uploading all images in folders below",os.path.dirname(__file__)+"\Images")
+
+    #check os
+    get_os()
 
     #tranverse directories
     for root, dirs, files in os.walk("./Images"):
