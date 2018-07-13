@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, sys
+import os, sys, time
 
 from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
@@ -33,6 +33,7 @@ def upload_files():
     print("Fill 200x150 url: " + url)
     print("")
 
+    time.sleep(4)
     print("--- Upload a local file with custom public ID")
     response = upload("pizza.jpg",
         tags = DEFAULT_TAG,
@@ -47,7 +48,7 @@ def upload_files():
     )
     print("Fit into 200x150 url: " + url)
     print("")
-
+    time.sleep(4)
     print("--- Upload a local file with eager transformation of scaling to 200x150")
     response = upload("lake.jpg",
         tags = DEFAULT_TAG,
@@ -69,6 +70,7 @@ def upload_files():
     print("")
 
     print("--- Upload by fetching a remote image")
+    time.sleep(4)
     response = upload("http://res.cloudinary.com/demo/image/upload/couple.jpg",
         tags = DEFAULT_TAG,
     )
@@ -84,6 +86,7 @@ def upload_files():
     print("")
 
     print("--- Fetch an uploaded remote image, fitting it into 500x500 and reducing saturation")
+    time.sleep(4)
     response = upload("http://res.cloudinary.com/demo/image/upload/couple.jpg",
         tags = DEFAULT_TAG,
         width = 500,
@@ -123,3 +126,4 @@ else:
     print("    you can only one instead by passing 'upload' or 'cleanup' as an argument")
     print("")
     upload_files()
+print ("Done!")
