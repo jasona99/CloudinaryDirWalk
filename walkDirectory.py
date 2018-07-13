@@ -18,6 +18,20 @@ START_TAG = "mass_uploaded_file"
 
 autotag_flag = False
 
+
+#Check if running Windows.
+win_os = False
+
+def get_os():
+    if os.name == "nt":
+        print("Note: Running Windows!")
+        win_os = True
+        time.sleep(3)
+    else:
+        print("Note: Not running Windows!")
+        win_os = False
+        time.sleep(3)
+
 #Uncomment to enable autotagging.
 #autotag_flag = True
 
@@ -31,7 +45,8 @@ def dump_response(response):
 #upload with file path and name, list of tags to be applied
 def upload_file(path, filename, tag_list):
     print("Uploading", file)
-    path = '/'.join(path.split('\\'))
+    if win_os == True:
+        path = '/'.join(path.split('\\'))
     print(path[2:]+"/"+filename)
 
     #check autotag flag
@@ -82,7 +97,10 @@ def completed_move(path, filename):
     newpath = "./Backup"+path[1:]
     if not os.path.exists(newpath):
         os.makedirs(newpath)
-    os.rename(path+"\\"+filename, newpath+"\\"+filename)
+    if win_os:
+        os.rename(path+"\\"+filename, newpath+"\\"+filename)
+    else:
+        os.rename(path+"/"+filename, newpath+"/"+filename)
 
 #get a public id with directories so as to get subdirectories
 #with use_filename parameter, should be unnecessary
@@ -108,7 +126,7 @@ if (os.path.isdir("Images")):
 
             #this line below actually will upload things
             #be wary if testing
-            if not file[-2:] == "db" and not file.startswith("."):
+            if not file[-2:] == "db" and not file.startswith(".") and not file[-3:] == "zip":
                 upload_code = upload_file(root, file, tags)
 
                 #move completed files
