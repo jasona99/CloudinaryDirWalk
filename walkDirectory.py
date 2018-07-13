@@ -88,7 +88,7 @@ if (os.path.isdir("Images")):
         for file in files:
             print(file)
             tags = directory_tags(path)
-            pub_id = get_id(root, file)
+            #pub_id = get_id(root, file)
 
             #this line below actually will upload things
             #be wary if testing
