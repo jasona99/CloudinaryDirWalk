@@ -10,7 +10,7 @@ If utilizing the code yourself, be sure to add API key and secret to that.
 * Cloudinary API key/secret.
 ## Using the script
 1. Place the script in a directory also containing an Images directory.
-  1. All images should be in directories under this folder.
+    1. All images should be in directories under this folder.
 2. Update settings.py with necessary API material.
 3. Run the script!
 ## Sample settings.py file.
