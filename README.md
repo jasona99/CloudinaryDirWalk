@@ -13,7 +13,7 @@ If utilizing the code yourself, be sure to add API key and secret to that.
     1. All images should be in directories under this folder.
 2. Update settings.py with necessary API material.
 3. Run the script!
-## Sample settings.py file.
+## Sample settings.py file
     from cloudinary import config
 
     def set():
