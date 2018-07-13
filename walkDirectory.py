@@ -33,7 +33,11 @@ def upload_file(path, file, tag_list):
     print("Uploading", file)
     path = '/'.join(path.split('\\'))
     print(path[2:]+"/"+file)
+
+    #check autotag flag
     if autotag_flag == True:
+
+        #use sdk upload function with params
         response = upload(path[2:]+"/"+file,
                           use_filename = True,
                           folder = path[2:],
@@ -41,6 +45,7 @@ def upload_file(path, file, tag_list):
                           auto_tagging = 0.5,
                           tags = tag_list)
     else:
+        #use sdk upload function with params
         response = upload(path[2:]+"/"+file,
                           use_filename = True,
                           folder = path[2:],
