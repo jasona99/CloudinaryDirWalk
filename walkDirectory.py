@@ -16,6 +16,11 @@ settings.set()
 #a tag that may be added to help show origin of images
 START_TAG = "mass_uploaded_file"
 
+autotag_flag = False
+
+#Uncomment to enable autotagging.
+#autotag_flag = True
+
 #from sample file
 #view the last response fron api call
 def dump_response(response):
@@ -28,12 +33,18 @@ def upload_file(path, file, tag_list):
     print("Uploading", file)
     path = '/'.join(path.split('\\'))
     print(path[2:]+"/"+file)
-    response = upload(path[2:]+"/"+file,
-                      use_filename = True,
-                      folder = path[2:],
-                      categorization = "google_tagging",
-                      auto_tagging = 0.5,
-                      tags = tag_list)
+    if autotag_flag == True:
+        response = upload(path[2:]+"/"+file,
+                          use_filename = True,
+                          folder = path[2:],
+                          categorization = "google_tagging",
+                          auto_tagging = 0.5,
+                          tags = tag_list)
+    else:
+        response = upload(path[2:]+"/"+file,
+                          use_filename = True,
+                          folder = path[2:],
+                          tags = tag_list)
 
     #if upload fails, should just create an error and kill the script
     #otherwise, may be necessary to read response here
