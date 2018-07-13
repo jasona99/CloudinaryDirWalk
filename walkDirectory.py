@@ -44,15 +44,6 @@ def upload_file(path, file, tag_list, public_id):
     #reached end, safety code
     return 0
 
-#ignore
-def tmp_move(path, file):
-    ext = os.path.splitext(file)[1]
-    shutil.copyfile(path+"\\"+file, ".\\temp" + ext)
-    return "temp"+ext, ext
-
-def tmp_delete():
-    os.remove("./tmp.jpg")
-
 #develop tags based on directories
 def directory_tags(split_path):
     tag_list = []
@@ -91,7 +82,7 @@ if (os.path.isdir("Images")):
 
             #this line below actually will upload things
             #be wary if testing
-            if not file[-1:] == "b":
+            if not file[-2:] == "db":
                 upload_code = upload_file(root, file, tags, pub_id)
 
                 #move completed files
