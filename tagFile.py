@@ -34,5 +34,3 @@ def tag_image(file, path):
             tag_list.append(label.description)
 
     return tag_list
-
-tags = tag_image('temp.jpg', os.path.dirname(__file__))
