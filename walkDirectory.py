@@ -4,6 +4,7 @@ import os, re, shutil, time
 #cloudinary sdk
 from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
+import tagFile
 
 #import settings file
 import settings
@@ -91,6 +92,11 @@ def directory_tags(split_path):
     #tag_list.append(START_TAG)
     return tag_list
 
+#get gcp autotags from defined gcp account
+#WARNING: Will cost!!!
+def get_autotag(file, path):
+    return tagFile(file, path)
+
 #move to ./Backup/Images
 #ensures that, if code must be run again, no need to worry about where it left off.
 #quicker solution than checking Cloudinary for duplicates
@@ -126,6 +132,10 @@ if (os.path.isdir("Images")):
         for file in files:
             print(file)
             tags = directory_tags(path)
+
+            #Add autotags if flag is set to true.
+            if autotag_flag:
+                tags.extend(get_autotag(file, path))
             #pub_id = get_id(root, file)
 
             #this line below actually will upload things
