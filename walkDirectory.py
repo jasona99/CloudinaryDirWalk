@@ -151,6 +151,7 @@ if (os.path.isdir("Images")):
                         #Attempt to connect to GCP and get tags.
                         try:
                             tags.extend(get_autotag(file, root))
+                            break
                         #Error
                         except:
                             #Raise system exit exception if reached all attempts.
