@@ -1,7 +1,9 @@
-settings.py
 /__pycache__
 doc.txt
 temp.db
 temp.jpg
 Thumbs.db
 /Images/
+/Backup/
+gcpkey.json
+cloudinarykey.json
