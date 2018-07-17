@@ -7,11 +7,11 @@ from cloudinary.utils import cloudinary_url
 import tagFile
 
 #import settings file
-import settings
+import cloudinary_settings
 
 #set Cloudinary config
 #to add an api key or secret, change this file
-settings.set()
+cloudinary_settings.set()
 #this may need to be run every hour in order to stay logged in
 
 #a tag that may be added to help show origin of images
