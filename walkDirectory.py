@@ -146,7 +146,23 @@ if (os.path.isdir("Images")):
 
                 #Add autotags if flag is set to true.
                 if autotag_flag:
-                    tags.extend(get_autotag(file, root))
+                    #Retry 10 times.
+                    for attempt in range(10):
+                        #Attempt to connect to GCP and get tags.
+                        try:
+                            tags.extend(get_autotag(file, root))
+                        #Error
+                        except:
+                            #Raise system exit exception if reached all attempts.
+                            if attempt == 9:
+                                print("All attempts failed")
+                                sys.exit()
+                            else:
+                                print("ERROR IN GOOGLE CLOUD PLATFORM. Waiting 5 seconds then retrying. Attempt ",attempt)
+                                time.sleep(5)
+
+
+
 
                 upload_code = upload_file(root, file, tags)
 
