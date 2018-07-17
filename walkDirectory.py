@@ -131,11 +131,15 @@ if (os.path.isdir("Images")):
         #print(os.path.basename(root))
         for file in files:
             print(file)
+
+            #Get tags based on directory
             tags = directory_tags(path)
 
             #Add autotags if flag is set to true.
             if autotag_flag:
                 tags.extend(get_autotag(file, path))
+
+
             #pub_id = get_id(root, file)
 
             #this line below actually will upload things
