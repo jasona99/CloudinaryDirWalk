@@ -1,28 +1,19 @@
 # CloudinaryDirWalk
 Recursively "walks" through an ./Images directory containing only images, looking for images to upload to Cloudinary.
-Utilizes a settings.py file with a set() method to define configuration options.
-If utilizing the code yourself, be sure to add API key and secret to that.
+Utilizes JSON files for settings.
+If utilizing the code yourself, be sure to add the files for authentication for both Cloudinary and GCP.
 ## Requirements
 * A number of images in sorted folders already
 * Python 3.x (built and tested on 3.5)
 * Cloudinary SDK
   * PIP install recommended. Package named cloudinary.
-* Cloudinary API key/secret.
+* Cloudinary API key/secret in a JSON.
+* Google Cloud Platform account with Vision API enabled
 ## Using the script
 1. Place the script in a directory also containing an Images directory.
     1. All images should be in directories under this folder.
-2. Update settings.py with necessary API material.
+2. Add the JSON file for the Google Cloud Service Account renamed to gcpkey.json, make one for Cloudinary containing keys for cloud_name, api_key, and api_secret named cloudinarykey.json.
 3. Run the script!
-## Sample settings.py file
-    from cloudinary import config
-
-    def set():
-        config(
-            cloud_name = "test-name",
-            api_key="12345678",
-            api_secret = "SecretKeyProvided"
-        )
-Though Cloudinary does suggest putting the data in path, seemed less than ideal for the use case.
 ## Potential Issues
 * Running the script for more than 1 hour may lead to a stale request error.
   * Cause: Cloudinary has a limit on the amount of time a single set may be used.
