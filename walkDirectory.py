@@ -4,20 +4,22 @@ import os, re, shutil, time
 #cloudinary sdk
 from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
+
+#importing method to tag
 import tagFile
 
 #import settings file
-import cloudinary_settings
+import cloudinarySettings
 
 #set Cloudinary config
 #to add an api key or secret, change this file
-cloudinary_settings.set()
+cloudinarySettings.set()
 #this may need to be run every hour in order to stay logged in
 
 #a tag that may be added to help show origin of images
 START_TAG = "mass_uploaded_file"
 
-autotag_flag = False
+autotag_flag = True
 
 
 #Check if running Windows.
@@ -52,21 +54,20 @@ def upload_file(path, filename, tag_list):
     print(path[2:]+"/"+filename)
 
     #check autotag flag
-    if autotag_flag == True:
+    #if autotag_flag == True:
 
-        #use sdk upload function with params
-        response = upload(path[2:]+"/"+file,
-                          use_filename = True,
-                          folder = path[2:],
-                          categorization = "google_tagging",
-                          auto_tagging = 0.5,
-                          tags = tag_list)
-    else:
+    #use sdk upload function with params
+    response = upload(path[2:]+"/"+file,
+                      use_filename = True,
+                      folder = path[2:],
+                      tags = tag_list)
+    """else:
         #use sdk upload function with params
         response = upload(path[2:]+"/"+file,
                           use_filename = True,
                           folder = path[2:],
                           tags = tag_list)
+    """
 
     #if upload fails, should just create an error and kill the script
     #otherwise, may be necessary to read response here
@@ -95,7 +96,9 @@ def directory_tags(split_path):
 #get gcp autotags from defined gcp account
 #WARNING: Will cost!!!
 def get_autotag(file, path):
-    return tagFile(file, path)
+    print(path, file)
+    tags = tagFile.tag_image(file, path)
+    return tags
 
 #move to ./Backup/Images
 #ensures that, if code must be run again, no need to worry about where it left off.
@@ -135,16 +138,16 @@ if (os.path.isdir("Images")):
             #Get tags based on directory
             tags = directory_tags(path)
 
-            #Add autotags if flag is set to true.
-            if autotag_flag:
-                tags.extend(get_autotag(file, path))
-
-
             #pub_id = get_id(root, file)
 
             #this line below actually will upload things
             #be wary if testing
             if not file[-2:] == "db" and not file.startswith(".") and not file[-3:] == "zip" and not file[-3:] == "MOV" and not file[-3:] == "mov":
+
+                #Add autotags if flag is set to true.
+                if autotag_flag:
+                    tags.extend(get_autotag(file, root))
+
                 upload_code = upload_file(root, file, tags)
 
                 #move completed files
