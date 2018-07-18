@@ -154,7 +154,7 @@ if (os.path.isdir("Images")):
                 #Add autotags if flag is set to true.
                 if autotag_flag:
                     #Retry 10 times.
-                    for attempt in range(10):
+                    for attempt in range(5):
                         #Attempt to connect to GCP and get tags.
                         try:
                             tags.extend(get_autotag(file, root, credentials))
@@ -162,7 +162,7 @@ if (os.path.isdir("Images")):
                         #Error
                         except:
                             #Log and move on if limit reached.
-                            if attempt == 9:
+                            if attempt == 4:
                                 print("All attempts failed, logging and moving on without adding autotags to file.")
                                 logging.warn("GCP was unable to handle "+file+" in "+root+" at attempt "+str(attempt)+".")
                                 continue
