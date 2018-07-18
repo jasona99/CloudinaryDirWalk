@@ -160,10 +160,10 @@ if (os.path.isdir("Images")):
                             #Log and move on if limit reached.
                             if attempt == 9:
                                 print("All attempts failed, logging and moving on without adding autotags to file.")
-                                logging.warn("GCP was unable to handle "+file+" in "+root+" at attempt "+attempt+".")
+                                logging.warn("GCP was unable to handle "+file+" in "+root+" at attempt "+str(attempt)+".")
                                 continue
                             else:
-                                print("ERROR IN GOOGLE CLOUD PLATFORM. Waiting 5 seconds then retrying. Attempt ",attempt)
+                                print("ERROR IN GOOGLE CLOUD PLATFORM. Waiting 5 seconds then retrying. Attempt ",str(attempt))
                                 time.sleep(5)
 
 
@@ -181,7 +181,7 @@ if (os.path.isdir("Images")):
                             logging.warn("Cloudinary was unable to handle "+file+" in "+root+".")
                             continue
                         else:
-                            print("ERROR IN Cloudinary. Waiting 5 seconds then retrying. Attempt ",attempt)
+                            print("ERROR IN Cloudinary. Waiting 5 seconds then retrying. Attempt ",str(attempt))
                             time.sleep(5)
 
 
