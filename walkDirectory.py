@@ -1,5 +1,5 @@
 #some basic imports
-import os, sys, re, shutil, time
+import os, sys, re, shutil, time, logging
 
 #cloudinary sdk
 from cloudinary.uploader import upload
@@ -15,6 +15,9 @@ import cloudinarySettings
 #to add an api key or secret, change this file
 cloudinarySettings.set()
 #this may need to be run every hour in order to stay logged in
+
+#prepare to logging
+logging.basicConfig(filename="dirwalk.log", level=logging.DEBUG)
 
 #a tag that may be added to help show origin of images
 START_TAG = "mass_uploaded_file"
@@ -154,18 +157,33 @@ if (os.path.isdir("Images")):
                             break
                         #Error
                         except:
-                            #Raise system exit exception if reached all attempts.
+                            #Log and move on if limit reached.
                             if attempt == 9:
-                                print("All attempts failed")
-                                sys.exit()
+                                print("All attempts failed, logging and moving on without adding autotags to file.")
+                                logging.warn("GCP was unable to handle "+file+" in "+root+" at attempt "+attempt+".")
+                                continue
                             else:
                                 print("ERROR IN GOOGLE CLOUD PLATFORM. Waiting 5 seconds then retrying. Attempt ",attempt)
                                 time.sleep(5)
 
 
 
+                for attempt in range(3):
+                    #Attempt to connect to cloudinary and upload
+                    try:
+                        upload_code = upload_file(root, file, tags)
+                        break
+                    #Error
+                    except:
+                        #Log and move on if attempt limit reached.
+                        if attempt == 2:
+                            print("All attempts failed to upload file, logging and moving on without uploading.")
+                            logging.warn("Cloudinary was unable to handle "+file+" in "+root+".")
+                            continue
+                        else:
+                            print("ERROR IN Cloudinary. Waiting 5 seconds then retrying. Attempt ",attempt)
+                            time.sleep(5)
 
-                upload_code = upload_file(root, file, tags)
 
                 #move completed files
                 if upload_code == 0:
