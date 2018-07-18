@@ -1,5 +1,5 @@
 #some basic imports
-import os, re, shutil, time
+import os, sys, re, shutil, time
 
 #cloudinary sdk
 from cloudinary.uploader import upload
