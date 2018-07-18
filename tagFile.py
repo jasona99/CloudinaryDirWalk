@@ -6,10 +6,10 @@ from google.cloud import vision
 from google.cloud.vision import types
 from google.oauth2 import service_account
 
-def tag_image(file, path):
+def tag_image(file, path, credentials_passed):
     tag_list = []
 
-    credentials = service_account.Credentials.from_service_account_file('gcpkey.json')
+    credentials = credentials_passed
 
     # Instantiates a client
     client = vision.ImageAnnotatorClient(credentials=credentials)

@@ -4,6 +4,9 @@ import os, sys, re, shutil, time, logging
 #cloudinary sdk
 from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
+from google.oauth2 import service_account
+
+credentials = service_account.Credentials.from_service_account_file('gcpkey.json')
 
 #importing method to tag
 import tagFile
@@ -23,6 +26,7 @@ logging.basicConfig(filename="dirwalk.log", level=logging.DEBUG)
 START_TAG = "mass_uploaded_file"
 
 autotag_flag = True
+
 
 
 #Check if running Windows.
@@ -153,7 +157,7 @@ if (os.path.isdir("Images")):
                     for attempt in range(10):
                         #Attempt to connect to GCP and get tags.
                         try:
-                            tags.extend(get_autotag(file, root))
+                            tags.extend(get_autotag(file, root, credentials))
                             break
                         #Error
                         except:
