@@ -5,8 +5,11 @@ import os, sys, re, shutil, time, logging
 from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
 from google.oauth2 import service_account
+from google.cloud.vision import types
+from google.cloud import vision
 
 credentials = service_account.Credentials.from_service_account_file('gcpkey.json')
+gcp_client = vision.ImageAnnotatorClient(credentials=credentials)
 
 #importing method to tag
 import tagFile
@@ -104,7 +107,7 @@ def directory_tags(split_path):
 #WARNING: Will cost!!!
 def get_autotag(file, path):
     print(path, file)
-    tags = tagFile.tag_image(file, path)
+    tags = tagFile.tag_image(file, path, gcp_client)
     return tags
 
 #move to ./Backup/Images
@@ -157,14 +160,15 @@ if (os.path.isdir("Images")):
                     for attempt in range(5):
                         #Attempt to connect to GCP and get tags.
                         try:
-                            tags.extend(get_autotag(file, root, credentials))
+                            print("Trying!")
+                            tags.extend(get_autotag(file, root))
                             break
                         #Error
                         except:
                             #Log and move on if limit reached.
                             if attempt == 4:
                                 print("All attempts failed, logging and moving on without adding autotags to file.")
-                                logging.warn("GCP was unable to handle "+file+" in "+root+" at attempt "+str(attempt)+".")
+                                logging.warning("GCP was unable to handle "+file+" in "+root+" at attempt "+str(attempt)+".")
                                 continue
                             else:
                                 print("ERROR IN GOOGLE CLOUD PLATFORM. Waiting 5 seconds then retrying. Attempt ",str(attempt))
@@ -182,7 +186,7 @@ if (os.path.isdir("Images")):
                         #Log and move on if attempt limit reached.
                         if attempt == 2:
                             print("All attempts failed to upload file, logging and moving on without uploading.")
-                            logging.warn("Cloudinary was unable to handle "+file+" in "+root+".")
+                            logging.warning("Cloudinary was unable to handle "+file+" in "+root+".")
                             continue
                         else:
                             print("ERROR IN Cloudinary. Waiting 5 seconds then retrying. Attempt ",str(attempt))
