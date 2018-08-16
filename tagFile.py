@@ -1,5 +1,6 @@
 import io
 import os
+from PIL import Image
 
 # Imports the Google Cloud client library
 from google.cloud import vision
@@ -11,6 +12,22 @@ def tag_image(file, path, client):
 
     # The name of the image file to annotate
     file_name = os.path.join(path, file)
+
+    # Check if file size exceeds 10MB limit and attempts to optimize
+    while (os.stat(file_name).st_size > 10485760):
+        print("**File too large, will attempt to optimize.**")
+        
+        # Load image
+        pil_image = Image.open(file_name)
+
+        # Cut height/width in half, applying magic of antialiasing!
+        new_width = int(pil_image.size[0]/2)
+        new_height = int(pil_image.size[1]/2)
+        pil_image = pil_image.resize((new_width,new_height), Image.ANTIALIAS)
+
+        # Save and optimize, quality at 95%
+        pil_image.save("tmp.jpg", optimize=True, quality=95)
+        file_name = "tmp.jpg"
 
     # Loads the image into memory
     with io.open(file_name, 'rb') as image_file:
