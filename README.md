@@ -9,6 +9,9 @@ If utilizing the code yourself, be sure to add the files for authentication for 
   * PIP install recommended. Package named cloudinary.
 * Cloudinary API key/secret in a JSON.
 * Google Cloud Platform account with Vision API enabled
+  * PIP install recommended. Package named google-cloud.
+* Pillow for image shrinking if over 10MB
+  * PIP install recommended. Package named pillow.
 ## Using the script
 1. Place the script in a directory also containing an Images directory.
     1. All images should be in directories under this folder.
