@@ -21,6 +21,7 @@ import cloudinarySettings
 #to add an api key or secret, change this file
 cloudinarySettings.set()
 #this may need to be run every hour in order to stay logged in
+#Note: determined to be non-issue.
 
 #prepare to logging
 logging.basicConfig(filename="dirwalk.log", level=logging.DEBUG)
