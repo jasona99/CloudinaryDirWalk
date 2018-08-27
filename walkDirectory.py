@@ -35,10 +35,10 @@ autotag_attempts = 5
 #attempts to make to upload to Cloudinary
 cloudinary_attempts = 3
 
-#files to ignore
-prefix = ["."]
-twodigit = ["db"]
-threedigit = ["mov", "MOV", "zip"]
+#files to ignore based on beginning or type
+single_prefix = [".", ",", "-"]
+double_suffix = ["db"]
+triple_suffix = ["mov", "MOV", "zip"]
 
 #Check if running Windows.
 win_os = False
@@ -163,7 +163,7 @@ for root, dirs, files in os.walk("./Images"):
 
         #this line below actually will upload things
         #be wary if testing
-        if not file[-2:] in twodigit and not file[:1] in prefix and not file[-3:] in threedigit:
+        if not file[-2:] in double_suffix and not file[-3:] in triple_suffix and not file[:1] in single_prefix:
             #Add autotags if flag is set to true.
             if autotag_flag:
                 #Retry 10 times.
