@@ -28,10 +28,17 @@ logging.basicConfig(filename="dirwalk.log", level=logging.DEBUG)
 
 #a tag that may be added to help show origin of images
 START_TAG = "mass_uploaded_file"
-
+#set to run through autotag
 autotag_flag = True
+#attempts to make to autotag
+autotag_attempts = 5
+#attempts to make to upload to Cloudinary
+cloudinary_attempts = 3
 
-
+#files to ignore
+prefix = ["."]
+twodigit = ["db"]
+threedigit = ["mov", "MOV", "zip"]
 
 #Check if running Windows.
 win_os = False
@@ -130,78 +137,76 @@ def get_id(path, file):
     return fixed_path.replace(" ","-")+"/"+file.replace(" ","-")
 
 #check if Images exists
-if (os.path.isdir("Images")):
+#if no images, exit
+if not (os.path.isdir("Images")):
+    print("No Images directory found.")
+    sys.exit(1)
 
-    #notify of path that will be uploaded
-    print("Uploading all images in folders below",os.path.dirname(__file__)+"\Images")
+#notify of path that will be uploaded
+print("Uploading all images in folders below",os.path.dirname(__file__)+"\Images")
 
-    #check os
-    get_os()
+#check os
+get_os()
 
-    #tranverse directories
-    for root, dirs, files in os.walk("./Images"):
-        #break directory into list
-        path = root.split(os.sep)
-        #print(os.path.basename(root))
-        for file in files:
-            print(file)
+#tranverse directories
+for root, dirs, files in os.walk("./Images"):
+    #break directory into list
+    path = root.split(os.sep)
+    #print(os.path.basename(root))
+    for file in files:
+        print(file)
 
-            #Get tags based on directory
-            tags = directory_tags(path)
+        #Get tags based on directory
+        tags = directory_tags(path)
 
-            #pub_id = get_id(root, file)
+        #pub_id = get_id(root, file)
 
-            #this line below actually will upload things
-            #be wary if testing
-            if not file[-2:] == "db" and not file.startswith(".") and not file[-3:] == "zip" and not file[-3:] == "MOV" and not file[-3:] == "mov":
-
-                #Add autotags if flag is set to true.
-                if autotag_flag:
-                    #Retry 10 times.
-                    for attempt in range(5):
-                        #Attempt to connect to GCP and get tags.
-                        try:
-                            print("Trying!")
-                            tags.extend(get_autotag(file, root))
-                            break
-                        #Error
-                        except:
-                            #Log and move on if limit reached.
-                            if attempt == 4:
-                                print("All attempts failed, logging and moving on without adding autotags to file.")
-                                logging.warning("GCP was unable to handle "+file+" in "+root+" at attempt "+str(attempt)+".")
-                                continue
-                            else:
-                                print("ERROR IN GOOGLE CLOUD PLATFORM. Waiting 5 seconds then retrying. Attempt ",str(attempt))
-                                time.sleep(5)
-
-
-
-                for attempt in range(3):
-                    #Attempt to connect to cloudinary and upload
+        #this line below actually will upload things
+        #be wary if testing
+        if not file[-2:] in twodigit and not file[:1] in prefix and not file[-3:] in threedigit:
+            #Add autotags if flag is set to true.
+            if autotag_flag:
+                #Retry 10 times.
+                for attempt in range(autotag_attempts):
+                    #Attempt to connect to GCP and get tags.
                     try:
-                        upload_code = upload_file(root, file, tags)
+                        print("Trying!")
+                        tags.extend(get_autotag(file, root))
                         break
                     #Error
                     except:
-                        #Log and move on if attempt limit reached.
-                        if attempt == 2:
-                            print("All attempts failed to upload file, logging and moving on without uploading.")
-                            logging.warning("Cloudinary was unable to handle "+file+" in "+root+".")
+                        #Log and move on if limit reached.
+                        if attempt == (autotag_attempts-1):
+                            print("All attempts failed, logging and moving on without adding autotags to file.")
+                            logging.warning("GCP was unable to handle "+file+" in "+root+" at attempt "+str(attempt)+".")
                             continue
                         else:
-                            print("ERROR IN Cloudinary. Waiting 5 seconds then retrying. Attempt ",str(attempt))
+                            print("ERROR IN GOOGLE CLOUD PLATFORM. Waiting 5 seconds then retrying. Attempt ",str(attempt))
                             time.sleep(5)
 
 
-                #move completed files
-                if upload_code == 0:
-                    #move completed files to backup dir
-                    completed_move(root, file)
-                    print("Complete.")
-                else:
-                    print("Failed at ",file)
 
-#no images?
-else:
-    print("Images directory not found.")
+            for attempt in range(cloudinary_attempts):
+                #Attempt to connect to cloudinary and upload
+                try:
+                    upload_code = upload_file(root, file, tags)
+                    break
+                #Error
+                except:
+                    #Log and move on if attempt limit reached.
+                    if attempt == (cloudinary_attempts-1):
+                        print("All attempts failed to upload file, logging and moving on without uploading.")
+                        logging.warning("Cloudinary was unable to handle "+file+" in "+root+".")
+                        continue
+                    else:
+                        print("ERROR IN Cloudinary. Waiting 5 seconds then retrying. Attempt ",str(attempt))
+                        time.sleep(5)
+
+
+            #move completed files
+            if upload_code == 0:
+                #move completed files to backup dir
+                completed_move(root, file)
+                print("Complete.")
+            else:
+                print("Failed at ",file)
